@@ -64,7 +64,11 @@ def commits_for_n_days(days):
 
 
 def current_branch():
-    return Call("git branch | grep '*' | awk '{print $2}'").stdout
+    branch = Call('git rev-parse --abbrev-ref HEAD').stdout
+    # already checkout to particular commit
+    if branch == 'HEAD':
+        return Call('git rev-parse HEAD').stdout
+    return branch
 
 
 def checkout(sha1):
@@ -95,6 +99,7 @@ def call_on_commit(cmd, commit, verbose=False):
     if verbose:
         print('=' * 150)
         print(c.stdout)
+        print(c.stderr)
         print('=' * 150)
         print('\n' * 3)
 
